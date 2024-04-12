@@ -1,0 +1,25 @@
+
+# gitignore for ios
+
+# Xcode
+.DS_Store
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# build
+build/
+DerivedData/
+
+# AppCode
+.idea/
