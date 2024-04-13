@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import CryptoKit
 import UIKit
+import CommonCrypto
+
 
 let _kDefaultUri = "ws://localhost:9090";
 
@@ -93,11 +94,8 @@ public class NConsole {
         
         let session = URLSession(configuration: .default)
         _socket = session.webSocketTask(with: url)
-        listenWebSocket(data)
         _socket?.resume()
         sendData(data)
-        
-        print("connectWebSocket::data=\(String(describing: data))")
     }
     
     private func isSocketConnected() -> Bool {
@@ -117,24 +115,6 @@ public class NConsole {
         @unknown default:
             return false
         }
-    }
-    
-    private func listenWebSocket(_ data: String? = nil) {
-        _socket?.receive(completionHandler: { [weak self] result in
-            print("listenWebSocket::result \(result)")
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(_):
-                _isConnected = true
-                print("listenWebSocket::success")
-                sendData(data)
-            case .failure(_):
-                print("listenWebSocket::failure")
-                _isConnected = false
-                _socket = nil
-            }
-        })
     }
     
     private func sendData(_ data: String? = nil) {
@@ -194,10 +174,14 @@ public class NConsole {
     }
     
     private func sendData(data: [Any], type: LogType) {
-        print("log:::2::isEnable=\(NConsole.isEnable) type=\(type.rawValue) data=\(data)")
         if !NConsole.isEnable {
             return
         }
+        
+        var isDebug = false
+        #if DEBUG
+            isDebug = true
+        #endif
         
         if _clientInfo == nil {
             let device = UIDevice.current
@@ -205,7 +189,7 @@ public class NConsole {
                 id: device.identifierForVendor?.uuidString ?? "",
                 name: device.name,
                 platform: "iOS",
-                debug: false,
+                debug: isDebug,
                 isSimulator: device.name.contains("Simulator"),
                 version: device.systemVersion,
                 buildVersion: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "",
@@ -229,8 +213,8 @@ public class NConsole {
             let dataRequest = LogRequestData(
                 timestamp: currentTime,
                 logType: type.rawValue,
-                secure: false,
-                payload: LogPayload(data: dataString),
+                secure: _publicKey != nil,
+                payload: encode(dataString),
                 language: "swift"
             )
             
@@ -250,18 +234,93 @@ public class NConsole {
         }
     }
     
-//    private func encode(_ data: String) -> String {
-//        guard let publicKey = NConsole.publicKey, isSecure = NConsole.isSecure else {
-//            return data
-//        }
-//        
-//        let keyRaw = generateHexString(length: 32)
-//        let ivRaw = generateHexString(length: 16)
-//        
-//        let key = keyRaw.data(using: .utf8)!
-//        let iv = ivRaw.data(using: .utf8)!
-//        
-//        let encryptedData = try! AES.GCM.
-//    }
+    private func encode(_ data: String) -> LogPayload {
+        if _publicKey == nil || !_isSecure {
+           return LogPayload(data: data)
+       }
+        
+        let keyRaw = genHexString(length: 32)
+        let ivRaw = genHexString(length: 16)
+        
+        let key = keyRaw.data(using: .utf8)!
+        let iv = ivRaw.data(using: .utf8)!
+        
+        if let encryptedData = aesCBCEncrypt(clearData: data.data(using: .utf8)!,
+                                                         key: key,
+                                                         iv: iv) {
+           let encryptedDataString = encryptedData.base64EncodedString()
+           let keyEncode = encrypt(string: "\(keyRaw)\(ivRaw)", publicKey: _publicKey)
+           return LogPayload(data: encryptedDataString, encryptionKey: keyEncode)
+       }
+
+       return LogPayload(data: data)
+    }
+    
+    private func aesCBCEncrypt(clearData: Data, key: Data, iv: Data) -> Data? {
+       let blockSize = kCCBlockSizeAES128
+       let encryptedDataCount = clearData.count + blockSize
+       var encryptedData = Data(count: encryptedDataCount)
+       var encryptedDataLength: size_t = 0
+       let status = key.withUnsafeBytes { keyBytes in
+           iv.withUnsafeBytes { ivBytes in
+               clearData.withUnsafeBytes { clearDataBytes in
+                   encryptedData.withUnsafeMutableBytes { encryptedDataBytes in
+                       CCCrypt(
+                           CCOperation(kCCEncrypt),
+                           CCAlgorithm(kCCAlgorithmAES),
+                           CCOptions(kCCOptionPKCS7Padding),
+                           keyBytes.baseAddress,
+                           key.count,
+                           ivBytes.baseAddress,
+                           clearDataBytes.baseAddress,
+                           clearData.count,
+                           encryptedDataBytes.baseAddress,
+                           encryptedDataBytes.count,
+                           &encryptedDataLength
+                       )
+                   }
+               }
+           }
+       }
+       guard status == kCCSuccess else {
+           return nil
+       }
+       encryptedData.removeSubrange(encryptedDataLength..<encryptedData.count)
+       return encryptedData
+    }
+    
+    private func encrypt(string: String, publicKey: String?) -> String? {
+        guard let publicKey = publicKey else { return nil }
+
+        let keyString = publicKey
+            .replacingOccurrences(of: "-----BEGIN PUBLIC KEY-----\n", with: "")
+            .replacingOccurrences(of: "\n-----END PUBLIC KEY-----", with: "")
+            .replacingOccurrences(of: "\n", with: "")
+        guard let data = Data(base64Encoded: keyString) else { return nil }
+
+        var attributes: CFDictionary {
+            return [kSecAttrKeyType         : kSecAttrKeyTypeRSA,
+                    kSecAttrKeyClass        : kSecAttrKeyClassPublic,
+                    kSecAttrKeySizeInBits   : 2048,
+                    kSecReturnPersistentRef : kCFBooleanTrue] as CFDictionary
+        }
+
+        var error: Unmanaged<CFError>? = nil
+        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
+            print(error.debugDescription)
+            return nil
+        }
+        return encrypt(string: string, publicKey: secKey)
+    }
+
+    private func encrypt(string: String, publicKey: SecKey) -> String? {
+        let buffer = [UInt8](string.utf8)
+
+        var keySize   = SecKeyGetBlockSize(publicKey)
+        var keyBuffer = [UInt8](repeating: 0, count: keySize)
+
+        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
+        return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
+    }
 }
 

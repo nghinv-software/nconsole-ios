@@ -15,6 +15,7 @@
 		2F9D2AB12BC8D4830077500D /* LogType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9D2AB02BC8D4830077500D /* LogType.swift */; };
 		2F9D2AB32BC8D4AD0077500D /* ClientInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9D2AB22BC8D4AD0077500D /* ClientInfo.swift */; };
 		2F9D2AB52BC8D5AE0077500D /* RequestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9D2AB42BC8D5AE0077500D /* RequestData.swift */; };
+		2F9D2AB72BCA2DFC0077500D /* CryptoError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9D2AB62BCA2DFC0077500D /* CryptoError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,7 @@
 		2F9D2AB02BC8D4830077500D /* LogType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogType.swift; sourceTree = "<group>"; };
 		2F9D2AB22BC8D4AD0077500D /* ClientInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientInfo.swift; sourceTree = "<group>"; };
 		2F9D2AB42BC8D5AE0077500D /* RequestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestData.swift; sourceTree = "<group>"; };
+		2F9D2AB62BCA2DFC0077500D /* CryptoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 				2F9D2AB02BC8D4830077500D /* LogType.swift */,
 				2F9D2AB22BC8D4AD0077500D /* ClientInfo.swift */,
 				2F9D2AB42BC8D5AE0077500D /* RequestData.swift */,
+				2F9D2AB62BCA2DFC0077500D /* CryptoError.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 				TargetAttributes = {
 					2F25EB8C2BBD9D320092568A = {
 						CreatedOnToolsVersion = 15.0;
+						LastSwiftMigration = 1500;
 					};
 					2F25EB962BBD9D330092568A = {
 						CreatedOnToolsVersion = 15.0;
@@ -219,6 +223,7 @@
 				2F25EB922BBD9D320092568A /* nconsole.docc in Sources */,
 				2F9D2AB32BC8D4AD0077500D /* ClientInfo.swift in Sources */,
 				2F9D2AB12BC8D4830077500D /* LogType.swift in Sources */,
+				2F9D2AB72BCA2DFC0077500D /* CryptoError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +374,7 @@
 		2F25EBA22BBD9D330092568A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -392,6 +398,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -400,6 +407,7 @@
 		2F25EBA32BBD9D330092568A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
