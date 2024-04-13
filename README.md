@@ -11,7 +11,7 @@ A library for show log in console. CocoaPod Specs for iOS/macOS.
 App desktop download [NConsole](https://drive.google.com/drive/folders/1P4cqXhalzsiPtrVAKWvoD9tK_pt9ZpzJ?usp=share_link)
 
 ```sh
-pod 'NConsole', '=1.0.0'
+pod 'NConsole', '=1.0.1'
 ```
 
 ## Usages
@@ -29,3 +29,8 @@ NConsole.log("Data:", dataTest)
 NConsole.groupEnd()
 ```
 
+## Note
+
+- Need to set `ENABLE_USER_SCRIPT_SANDBOXING = NO` in `VS CODE` to run the app on the simulator.
+
+GO to the VS CODE => SEARCH(Command +shift + f) => ENABLE_USER_SCRIPT_SANDBOXING = NO;

@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |spec|
   spec.name         = "NConsole"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.1"
   spec.summary      = "A Logger for iOS, macOS, tvOS, watchOS."
 
   spec.description  = <<-DESC
