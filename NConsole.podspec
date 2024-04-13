@@ -1,15 +1,15 @@
 
 Pod::Spec.new do |spec|
   spec.name         = "NConsole"
-  spec.version      = "0.0.1"
+  spec.version      = "1.0.0"
   spec.summary      = "A Logger for iOS, macOS, tvOS, watchOS."
 
   spec.description  = <<-DESC
-  A Logger for iOS, macOS, tvOS, watchOS.
+  The NConsole is a simple logger for iOS, macOS, tvOS, watchOS. It is easy to use and easy to show your log in console.
                    DESC
 
   spec.homepage     = "https://github.com/nghinv-software/nconsole-ios"
-  spec.screenshots  = "https://github.com/nghinv-software/nconsole-ios/demo_nconsole.png"
+  spec.screenshots  = "https://github.com/nghinv-software/nconsole-ios/blob/main/demo_nconsole.png"
 
   spec.license      = { :type => "MIT", :file => "LICENSE" }
 

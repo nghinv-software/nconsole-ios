@@ -1,38 +1,31 @@
-# NConsole
+# nconsole
 
-## Description
+A library for show log in console. CocoaPod Specs for iOS/macOS.
 
-NConsole is a simple logging library for various programming languages. It is designed to be simple to use and easy to integrate into any project. It is designed to be used in a variety of programming languages and frameworks.
+## Getting Started
 
-### Methods
+![Demo NConsole](https://github.com/nghinv-software/nconsole-ios/blob/main/demo_nconsole.png)
 
-- `log` - Log a message to the console
+## Installation
 
-- `info` - Log an informational message to the console
+App desktop download [NConsole](https://drive.google.com/drive/folders/1P4cqXhalzsiPtrVAKWvoD9tK_pt9ZpzJ?usp=share_link)
 
-- `warn` - Log a warning message to the console
+```sh
+pod 'NConsole', '=1.0.0'
+```
 
-- `error` - Log an error message to the console
+## Usages
 
-- `group` - Log a group of messages to the console
+```swift
+import NConsole
 
-- `groupEnd` - End a group of messages
+let dataTest = DataTest(name: "Thanh", old: 22, className: 11)
+NConsole.isEnable = true
 
-- `groupCollapsed` - Log a collapsed group of messages
-
-- `time` - Start a timer
-
-- `timeEnd` - End a timer
-
-- `count` - Log the number of times a message has been logged
-
-- `clear` - Clear the console
-
-- `table` - Log a table to the console
-
-- `trace` - Log a stack trace to the console
-
-- `assert` - Log a message to the console if a condition is false
-
-- `dir` - Log an object to the console
+NConsole.log("Data::", dataTest)
+NConsole.log("Hello")
+NConsole.groupCollapsed("Hi, how are you?")
+NConsole.log("Data:", dataTest)
+NConsole.groupEnd()
+```
 
