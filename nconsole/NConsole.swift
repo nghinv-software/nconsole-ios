@@ -302,7 +302,7 @@ public class NConsole {
             return [kSecAttrKeyType         : kSecAttrKeyTypeRSA,
                     kSecAttrKeyClass        : kSecAttrKeyClassPublic,
                     kSecAttrKeySizeInBits   : 2048,
-                    kSecReturnPersistentRef : kCFBooleanTrue] as CFDictionary
+                    kSecReturnPersistentRef : kCFBooleanTrue ?? true] as CFDictionary
         }
 
         var error: Unmanaged<CFError>? = nil
